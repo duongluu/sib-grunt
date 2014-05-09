@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Laravel Base" default="all" basedir="." description="SIB laravel default setup">
+    <property file="./build.properties"/>
+    <resolvepath propertyName="git.dir.resolved" file="${git.dir}" />
+    <tstamp>
+        <format property="TSTAMP" pattern="%H%M%S"/>
+    </tstamp>
+    <property name="git.folder" value="${DSTAMP}${TSTAMP}"/>
+
+    <target name="clean">
+        <echo msg="${msg.clean}"/>
+        <delete dir="${dir.bower}"/>
+        <delete dir="${dir.vendor}"/>
+        <delete dir="${dir.node}"/>
+        <delete file="${file.composer}"/>
+    </target>
+
+    <target name="prepare">
+        <echo msg="${msg.prepare}"/>
+        <delete dir="${dir.bower}"/>
+        <delete dir="${dir.vendor}"/>
+        <delete dir="${dir.node}"/>
+        <delete file="${file.composer}"/>
+    </target>
+
+
+    <target name="composer_install">
+        <echo msg="${msg.composer.install}"/>
+        <exec
+            command="sh composer_install.sh"
+            passthru="true"
+        />
+    </target>
+
+    <target name="npm">
+        <echo msg="${msg.npm}"/>
+        <exec
+            command="${cmd.npm} install"
+            passthru="true"
+        />
+    </target>
+
+    <target name="composer">
+        <echo msg="${msg.composer}"/>
+        <exec
+            command="${cmd.composer} install"
+            passthru="true"
+        />
+    </target>
+
+    <target name="bower">
+        <echo msg="${msg.bower}"/>
+        <exec
+            command="${cmd.bower} install"
+            passthru="true"
+        />
+    </target>
+
+    <target name="grunt">
+        <echo msg="${msg.grunt}"/>
+        <exec
+            command="${cmd.grunt}"
+            passthru="true"
+        />
+    </target>
+
+    <target name="artisan">
+        <echo msg="${msg.artisan}"/>
+        <exec
+            command="php artisan optimize"
+            passthru="true"
+        />
+    </target>
+
+    <target name="git_clone">
+        <echo msg="${msg.git.clone}"/>
+        <delete file="current"/>
+        <exec
+            command="${cmd.git.clone} ${git.url} ${git.folder}"
+            passthru="true"
+        />
+        <exec
+            command="ln -s ${git.folder} current"
+            passthru="true"
+        />
+        <exec
+            command="echo ${git.folder} > version"
+            passthru="true"
+        />
+    </target>
+
+    <target name="git_pull">
+        <echo msg="${msg.git.pull}"/>
+        <loadfile property="git.current" file="version"/>
+        <exec
+            command="cd ${git.current} &amp;&amp; ${git.pull}"
+            passthru="true"
+        />
+    </target>
+
+    <target name="all" depends="clean, composer_install, composer, npm, bower, grunt">
+        <echo msg="${msg.all}"/>
+    </target>
+
+    <target name="all" depends="clean, composer_install, composer, npm, bower, grunt">
+        <echo msg="${msg.all}"/>
+    </target>
+
+</project>
