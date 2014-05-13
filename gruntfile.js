@@ -33,26 +33,23 @@ module.exports = function (grunt) {
       // grunt-shell executes shell commands
       shell: {
         link_current: {
-            command: 'ln -s <%= options.folder.current %> current'
-        },
-        link_remove: {
-            command: 'rm current'
+            command: 'ln -s <%= options.folder.create %> current'
         },
         update_version: {
-            command: 'echo <%= options.folder.current %> > version'
+            command: 'echo <%= options.folder.create %> > version'
         },
         version: {
             command: 'echo ' + grunt.file.read('version')
         },
         composer_install: {
             command: [
-                'cd <%= options.folder.current %>/src',
+                'cd <%= options.folder.create %>/src',
                 'php -r \"readfile(\'https://getcomposer.org/installer\');" | php'
                 ].join('&&')
         },
         composer_deps: {
             command: [
-                'cd <%= options.folder.current %>/src',
+                'cd <%= options.folder.create %>/src',
                 'php composer.phar install'
                 ].join('&&')
         },
@@ -82,7 +79,10 @@ module.exports = function (grunt) {
       // grunt-contrib-clean: deletes directories
       clean: {
         all: {
-            src: '<%= options.clean.all %>'
+          src: '<%= options.clean.all %>'
+        },
+        setup: {
+          src: 'current'
         }
       },
       // grunt-contrin-concat: concatenates js files
@@ -194,6 +194,6 @@ module.exports = function (grunt) {
       }
     });
     grunt.registerTask('default', ['clean', 'concat', 'uglify', 'less', 'cssmin']);
-    grunt.registerTask('clone', ['gitclone:clone', 'shell:link_remove', 'shell:link_current', 'shell:update_version']);
+    grunt.registerTask('clone', ['gitclone:clone', 'shell:update_version', 'clean:setup', 'shell:link_current']);
     grunt.registerTask('setup', ['clone', 'shell:composer_install', 'shell:composer_deps', 'shell:npm', 'shell:bower']);
 }
